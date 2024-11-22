@@ -5,12 +5,12 @@
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>xs8911mid</groupId>
-    <artifactId>xs8911mid</artifactId>
+    <groupId>8912final</groupId>
+    <artifactId>8912final-loginserver-java</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Azure Java Functions Midterm</name>
+    <name>Azure Java Functions 8912 final login server</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

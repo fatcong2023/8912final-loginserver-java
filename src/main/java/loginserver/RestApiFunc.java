@@ -1,4 +1,4 @@
-package xs8911mid;
+package loginserver;
 
 import com.microsoft.azure.functions.annotation.*;
 import com.microsoft.azure.functions.*;
