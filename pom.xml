@@ -18,7 +18,7 @@
         <azure.functions.maven.plugin.version>1.24.0</azure.functions.maven.plugin.version>
         <azure.functions.java.library.version>2.2.0</azure.functions.java.library.version>
         <!-- Update functionAppName to your existing Function App name -->
-        <functionAppName>new8911mid</functionAppName>
+        <functionAppName>8912final-login-server</functionAppName>
     </properties>
 
     <dependencies>
