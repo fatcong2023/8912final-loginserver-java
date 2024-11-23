@@ -61,12 +61,14 @@ public class RestApiFunc {
                 lastName == null || lastName.isEmpty() ||
                 firstName == null || firstName.isEmpty()) {
                 return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
+                .header("Access-Control-Allow-Origin", "*")
                               .body("Invalid content: username, email, lastName, and firstName are required.")
                               .build();
             }
         } catch (Exception e) {
             logger.severe("Invalid JSON format: " + e.getMessage());
             return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
+            .header("Access-Control-Allow-Origin", "*")
                           .body("Invalid JSON format: " + e.getMessage())
                           .build();
         }
@@ -75,11 +77,13 @@ public class RestApiFunc {
             DatabaseOperations.insertUser(firstName, lastName, username, phoneNumber, email, logger);
         } catch (Exception e) {
             return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
+            .header("Access-Control-Allow-Origin", "*")
                           .body("Database insertion error: " + e.getMessage())
                           .build();
         }
 
         return request.createResponseBuilder(HttpStatus.OK)
+        .header("Access-Control-Allow-Origin", "*")
                       .body("User registered successfully.")
                       .build();
     }
