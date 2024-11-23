@@ -55,6 +55,8 @@ public class RestApiFunc {
         logger.info("HTTP POST trigger function processed a request.");
 
         String requestBody = request.getBody().orElse("");
+
+        logger.info(requestBody);
         ObjectMapper objectMapper = new ObjectMapper();
         String username, email, lastName, firstName, phoneNumber;
 
