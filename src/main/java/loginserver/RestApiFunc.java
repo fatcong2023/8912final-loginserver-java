@@ -4,10 +4,6 @@ import com.microsoft.azure.functions.annotation.*;
 import com.microsoft.azure.functions.*;
 
 import java.util.logging.Logger;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.util.List;
 import java.util.Optional;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,6 +28,20 @@ public class RestApiFunc {
                       .build();
     }
 
+    @FunctionName("OptionsHandler")
+    public HttpResponseMessage options(
+    @HttpTrigger(name = "req",
+                 methods = {HttpMethod.OPTIONS},
+                 authLevel = AuthorizationLevel.ANONYMOUS,
+                 route = "{*any}") HttpRequestMessage<Optional<String>> request,
+    final ExecutionContext context) {
+
+    return request.createResponseBuilder(HttpStatus.NO_CONTENT)
+                  .header("Access-Control-Allow-Origin", "*")
+                  .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+                  .header("Access-Control-Allow-Headers", "Content-Type")
+                  .build();
+}
     
     @FunctionName("RegisterUserFunction")
     public HttpResponseMessage registerUser(
