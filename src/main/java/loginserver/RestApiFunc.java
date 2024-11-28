@@ -58,7 +58,7 @@ public class RestApiFunc {
 
         logger.info(requestBody);
         ObjectMapper objectMapper = new ObjectMapper();
-        String username, email, lastName, firstName, phoneNumber;
+        String username, email, lastName, firstName, phoneNumber, password;
 
         try {
             JsonNode jsonNode = objectMapper.readTree(requestBody);
@@ -67,10 +67,11 @@ public class RestApiFunc {
             lastName = jsonNode.get("lastName").asText();
             firstName = jsonNode.get("firstName").asText();
             phoneNumber = jsonNode.get("phoneNumber").asText();
+            password = jsonNode.get("password").asText();
 
             if (username == null || username.isEmpty() ||
                 email == null || email.isEmpty() ||
-                lastName == null || lastName.isEmpty() ||
+                lastName == null || lastName.isEmpty() || password.isEmpty() || password == null ||
                 firstName == null || firstName.isEmpty()) {
                 return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
                 .header("Access-Control-Allow-Origin", "*")
@@ -86,7 +87,7 @@ public class RestApiFunc {
         }
 
         try {
-            DatabaseOperations.insertUser(firstName, lastName, username, phoneNumber, email, logger);
+            DatabaseOperations.insertUser(firstName, lastName, username, phoneNumber, email, password, logger);
         } catch (Exception e) {
             return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
             .header("Access-Control-Allow-Origin", "*")
@@ -99,4 +100,55 @@ public class RestApiFunc {
                       .body("User registered successfully.")
                       .build();
     }
+
+    @FunctionName("login")
+public HttpResponseMessage login(
+    @HttpTrigger(name = "req",
+                 methods = {HttpMethod.POST},
+                 authLevel = AuthorizationLevel.ANONYMOUS,
+                 route = "login") HttpRequestMessage<Optional<String>> request,
+    final ExecutionContext context) {
+    Logger logger = context.getLogger();
+    String username;
+    String password;
+
+    try {
+        JsonNode jsonNode = new ObjectMapper().readTree(request.getBody().orElseThrow(() -> new IllegalArgumentException("Invalid JSON format")));
+        username = jsonNode.get("username").asText();
+        password = jsonNode.get("password").asText();
+
+        if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
+            return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
+                .header("Access-Control-Allow-Origin", "*")
+                .body("Invalid content: username and password are required.")
+                .build();
+        }
+    } catch (Exception e) {
+        logger.severe("Invalid JSON format: " + e.getMessage());
+        return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
+            .header("Access-Control-Allow-Origin", "*")
+            .body("Invalid JSON format: " + e.getMessage())
+            .build();
+    }
+
+    try {
+        boolean isValidUser = DatabaseOperations.validateUser(username, password, logger);
+        if (isValidUser) {
+            return request.createResponseBuilder(HttpStatus.CREATED)
+                .header("Access-Control-Allow-Origin", "*")
+                .body("Login successful.")
+                .build();
+        } else {
+            return request.createResponseBuilder(HttpStatus.UNAUTHORIZED)
+                .header("Access-Control-Allow-Origin", "*")
+                .body("Invalid username or password.")
+                .build();
+        }
+    } catch (Exception e) {
+        return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
+            .header("Access-Control-Allow-Origin", "*")
+            .body("Database error: " + e.getMessage())
+            .build();
+    }
+}
 }
